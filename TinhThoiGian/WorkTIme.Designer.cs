@@ -30,15 +30,14 @@ namespace TinhThoiGian
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.choise = new System.Windows.Forms.Button();
             this.excelGridView = new System.Windows.Forms.DataGridView();
             this.eportToExcel = new System.Windows.Forms.Button();
             this.viewExcel = new System.Windows.Forms.Button();
             this.viewCheckInOut = new System.Windows.Forms.Button();
-            this.viewWorkTime = new System.Windows.Forms.Button();
             this.viewLackTIme = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.search = new System.Windows.Forms.TextBox();
@@ -62,8 +61,8 @@ namespace TinhThoiGian
             // 
             this.excelGridView.AllowUserToAddRows = false;
             this.excelGridView.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(239)))), ((int)(((byte)(249)))));
-            this.excelGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(239)))), ((int)(((byte)(249)))));
+            this.excelGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.excelGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -71,23 +70,23 @@ namespace TinhThoiGian
             this.excelGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.excelGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.excelGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(25)))), ((int)(((byte)(70)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.WhiteSmoke;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.excelGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(25)))), ((int)(((byte)(70)))));
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.WhiteSmoke;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.excelGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.excelGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.ForestGreen;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.excelGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.ForestGreen;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.excelGridView.DefaultCellStyle = dataGridViewCellStyle6;
             this.excelGridView.EnableHeadersVisualStyles = false;
             this.excelGridView.Location = new System.Drawing.Point(13, 87);
             this.excelGridView.Name = "excelGridView";
@@ -133,27 +132,15 @@ namespace TinhThoiGian
             this.viewCheckInOut.UseVisualStyleBackColor = true;
             this.viewCheckInOut.Click += new System.EventHandler(this.viewExcel_Click);
             // 
-            // viewWorkTime
-            // 
-            this.viewWorkTime.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.viewWorkTime.Location = new System.Drawing.Point(411, 22);
-            this.viewWorkTime.Name = "viewWorkTime";
-            this.viewWorkTime.Size = new System.Drawing.Size(127, 42);
-            this.viewWorkTime.TabIndex = 0;
-            this.viewWorkTime.Tag = "3";
-            this.viewWorkTime.Text = "Xem thời gian làm";
-            this.viewWorkTime.UseVisualStyleBackColor = true;
-            this.viewWorkTime.Click += new System.EventHandler(this.showWorkTime_Click);
-            // 
             // viewLackTIme
             // 
             this.viewLackTIme.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.viewLackTIme.Location = new System.Drawing.Point(544, 22);
+            this.viewLackTIme.Location = new System.Drawing.Point(411, 22);
             this.viewLackTIme.Name = "viewLackTIme";
-            this.viewLackTIme.Size = new System.Drawing.Size(127, 42);
+            this.viewLackTIme.Size = new System.Drawing.Size(204, 42);
             this.viewLackTIme.TabIndex = 0;
             this.viewLackTIme.Tag = "4";
-            this.viewLackTIme.Text = "Xem thời gian thiếu";
+            this.viewLackTIme.Text = "Tính công và thới gian muộn";
             this.viewLackTIme.UseVisualStyleBackColor = true;
             this.viewLackTIme.Click += new System.EventHandler(this.viewLackTime_Click);
             // 
@@ -173,9 +160,9 @@ namespace TinhThoiGian
             // 
             this.search.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.search.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F);
-            this.search.Location = new System.Drawing.Point(848, 26);
+            this.search.Location = new System.Drawing.Point(734, 26);
             this.search.Name = "search";
-            this.search.Size = new System.Drawing.Size(271, 38);
+            this.search.Size = new System.Drawing.Size(385, 38);
             this.search.TabIndex = 6;
             this.search.TextChanged += new System.EventHandler(this.search_TextChanged);
             // 
@@ -194,7 +181,6 @@ namespace TinhThoiGian
             this.Controls.Add(this.excelGridView);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.viewLackTIme);
-            this.Controls.Add(this.viewWorkTime);
             this.Controls.Add(this.viewCheckInOut);
             this.Controls.Add(this.viewExcel);
             this.Controls.Add(this.choise);
@@ -217,7 +203,6 @@ namespace TinhThoiGian
         private System.Windows.Forms.Button eportToExcel;
         private System.Windows.Forms.Button viewExcel;
         private System.Windows.Forms.Button viewCheckInOut;
-        private System.Windows.Forms.Button viewWorkTime;
         private System.Windows.Forms.Button viewLackTIme;
         private System.Windows.Forms.TextBox search;
         private System.Windows.Forms.ToolTip tt;

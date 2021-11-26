@@ -11,7 +11,8 @@ namespace TinhThoiGian
 {
     public partial class WorkTIme : System.Windows.Forms.Form
     {
-        const string COLUMN_SUM = "Tổng thời gian";
+        const string COLUMN_SUM = "Tổng thời gian muộn";
+        const string COLUMN_LABOR = "Tổng số công";
 
         string filePath;
         string fileExt;
@@ -26,7 +27,6 @@ namespace TinhThoiGian
 
         DataTable dataExcel;
         DataTable dataLackTime;
-        DataTable dataWorkTime;
         DataTable dataCheckinout;
 
         BindingSource bindingSource;
@@ -73,7 +73,6 @@ namespace TinhThoiGian
 
             viewExcel.Enabled = false;
             viewCheckInOut.Enabled = false;
-            viewWorkTime.Enabled = false;
             viewLackTIme.Enabled = false;
             eportToExcel.Enabled = false;
             search.Enabled = false;
@@ -125,7 +124,7 @@ namespace TinhThoiGian
                         this.dataCheckinout = listHelper.ArrayListToDataTable(this.listExcelDataCheckTime);
 
                         this.listWorkTime = this.caculateWorkTime(listExcelDataCheckTime);
-                        this.dataWorkTime = this.sumTimes(this.listWorkTime);
+                        //this.dataWorkTime = this.sumTimes(this.listWorkTime);
 
                         this.listLackTime = this.caculateLackTime(this.listToWithLateTime);
                         this.dataLackTime = this.sumTimes(this.listLackTime);
@@ -135,7 +134,6 @@ namespace TinhThoiGian
 
                         viewExcel.Enabled = true;
                         viewCheckInOut.Enabled = true;
-                        viewWorkTime.Enabled = true;
                         viewLackTIme.Enabled = true;
                         eportToExcel.Enabled = true;
                         search.Enabled = true;
@@ -164,10 +162,6 @@ namespace TinhThoiGian
         {
             this.resetGridView(this.dataLackTime);
         }
-        private void showWorkTime_Click(object sender, EventArgs e)
-        {
-            this.resetGridView(this.dataWorkTime);
-        }
         public void resetGridView(DataTable data)
         {
             this.bindingSource.DataSource = data;
@@ -176,6 +170,10 @@ namespace TinhThoiGian
             if (excelGridView.Columns.Contains(COLUMN_SUM))
             {
                 excelGridView.Columns[COLUMN_SUM].DisplayIndex = 3;
+            }
+            if (excelGridView.Columns.Contains(COLUMN_LABOR))
+            {
+                excelGridView.Columns[COLUMN_LABOR].DisplayIndex = 4;
             }
         }
 
@@ -542,6 +540,7 @@ namespace TinhThoiGian
                 {
                     int total = 0;
                     int count = 0;
+                    double countLabor = 0;
                     ArrayList itemClone = (ArrayList)items;
                     foreach (var item in items)
                     {
@@ -549,12 +548,28 @@ namespace TinhThoiGian
                         {
                             if (count >= 3 && (string)item != "")
                             {
-                                total += this.toMinute((string)item);
+                                int minute = this.toMinute((string)item);
+                                double labor = 0;
+                                total += minute;
+
+                                if (minute >= 8)
+                                {
+                                    labor = 0;
+                                }else if(minute >= 4)
+                                {
+                                    labor = 0.5;
+                                }else
+                                {
+                                    labor = 1;
+                                }
+                                countLabor += labor;
                             }
+
                         }
                         count++;
                     }
                     itemClone.Insert(3, this.toHour(total));
+                    itemClone.Insert(4, countLabor);
                 }
                 else
                 {
@@ -566,6 +581,10 @@ namespace TinhThoiGian
             if (!listHead.Contains(COLUMN_SUM))
             {
                 listHead.Insert(3, COLUMN_SUM);
+            }
+            if (!listHead.Contains(COLUMN_LABOR))
+            {
+                listHead.Insert(4, COLUMN_LABOR);
             }
             return listHelper.ArrayListToDataTable(listData);
         }
