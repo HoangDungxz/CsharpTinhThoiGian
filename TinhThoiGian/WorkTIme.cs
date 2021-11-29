@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,6 +16,8 @@ namespace TinhThoiGian
 
         string filePath;
         string fileExt;
+
+        bool forcusLabor = false;
 
         ArrayList listWorkTime;
         ArrayList listWeekEnds;
@@ -65,6 +67,7 @@ namespace TinhThoiGian
             //    }
             //}
 
+
             string dirpath = System.Reflection.Assembly.GetExecutingAssembly().Location
 .Replace(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + ".exe", "");
             string filePath = dirpath + "Document\\" + "employee.xls";
@@ -93,6 +96,7 @@ namespace TinhThoiGian
 
                 this.setData();
             }
+
         }
 
         public void setEmpolyeeData(string filePath)
@@ -115,6 +119,7 @@ namespace TinhThoiGian
                         //read excel file  
                         ArrayList excelData = excelHepler.ReadExcelInterop(this.filePath);
                         this.dataExcel = listHelper.ArrayListToDataTable(excelData);
+                        
 
                         this.listTitle = (ArrayList)excelData[0];
 
@@ -152,18 +157,22 @@ namespace TinhThoiGian
 
         private void viewExcelFile_Click(object sender, EventArgs e)
         {
+            this.forcusLabor = false;
             this.resetGridView(this.dataExcel);
         }
         private void viewExcel_Click(object sender, EventArgs e)
         {
+            this.forcusLabor = false;
             this.resetGridView(this.dataCheckinout);
         }
         private void viewLackTime_Click(object sender, EventArgs e)
         {
             this.resetGridView(this.dataLackTime);
+            forcusLabor = true;
         }
         public void resetGridView(DataTable data)
         {
+
             this.bindingSource.DataSource = data;
             this.bindingSource.Filter = "[Name] like '%" + search.Text + "%'";
             excelGridView.DataSource = this.bindingSource.DataSource;
@@ -487,14 +496,22 @@ namespace TinhThoiGian
                                 {
                                     minuteLack += lateTime;
                                 }
+                                string timeLack = "";
+                                if (minuteLack > 0)
+                                {
+                                    timeLack = this.toHour(minuteLack);
+                                }
+                                else
+                                {
+                                    timeLack = "00 : 00";
+                                }
 
-                                string timeLack = this.toHour(minuteLack);
                                 resultItem.Add(timeLack);
                                 resultItemMinute.Add(minuteLack);
                             }
                             else
                             {
-                                resultItem.Add("");
+                                resultItem.Add("00 : 00");
                                 resultItemMinute.Add("");
                             }
                         }
@@ -533,48 +550,55 @@ namespace TinhThoiGian
         }
         private DataTable sumTimes(ArrayList listData)
         {
-            bool flagHead = true;
+            //bool flagHead = true;
+            int countRow = 0;
+            Color colorRed = System.Drawing.ColorTranslator.FromHtml("#bf360c");
             foreach (IEnumerable items in listData)
             {
-                if (!flagHead)
+                if (countRow > 0)
                 {
                     int total = 0;
-                    int count = 0;
+                    int countColumn = 0;
                     double countLabor = 0;
                     ArrayList itemClone = (ArrayList)items;
                     foreach (var item in items)
                     {
                         if (item != System.DBNull.Value)
                         {
-                            if (count >= 3 && (string)item != "")
+                            if (countColumn >= 3 && (string)item != "")
                             {
                                 int minute = this.toMinute((string)item);
                                 double labor = 0;
                                 total += minute;
 
-                                if (minute >= 8)
+                                if(minute > this.toMinute("04:00"))
                                 {
                                     labor = 0;
-                                }else if(minute >= 4)
-                                {
-                                    labor = 0.5;
-                                }else
+                                }
+                                else if (minute == this.toMinute("00:00"))
                                 {
                                     labor = 1;
+                                }
+                                else
+                                {
+                                    labor = 0.5;
                                 }
                                 countLabor += labor;
                             }
 
                         }
-                        count++;
+                        countColumn++;
                     }
                     itemClone.Insert(3, this.toHour(total));
                     itemClone.Insert(4, countLabor);
+                    countRow++;
                 }
                 else
                 {
-                    flagHead = false;
+                    //flagHead = false;
+                    countRow++;
                 }
+
             }
             ArrayList listHead = (ArrayList)listData[0];
 
@@ -627,7 +651,7 @@ namespace TinhThoiGian
             }
             catch
             {
-                minute = 0;
+                minute = -1;
             }
 
             return minute;
@@ -683,5 +707,9 @@ namespace TinhThoiGian
             Application.Exit();
         }
 
+        private void excelGridView_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+
+        }
     }
 }

@@ -2,14 +2,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.OleDb;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace TinhThoiGian.Helper
 {
-  
+
     class ExcelHepler
     {
         public ArrayList ReadExcelInterop(string pathOfExcelFile, int columnCount = -1)
@@ -17,15 +17,19 @@ namespace TinhThoiGian.Helper
             Process[] excelProcsOld = Process.GetProcessesByName("EXCEL");
             if (!File.Exists(pathOfExcelFile))
             {
-                System.Windows.Forms.MessageBox.Show("File "+ pathOfExcelFile+ "\nKhông tồn tại\nVui lòng -> Nhập file");
+                System.Windows.Forms.MessageBox.Show("File " + pathOfExcelFile + "\nKhông tồn tại\nVui lòng -> Nhập file");
                 return new ArrayList();
             }
 
             ArrayList arrayList = new ArrayList();
 
+            string errorCells = "";
+
             try
             {
                 Application xlApp = new Application();
+
+
 
                 Workbook xlWorkbook = xlApp.Workbooks.Open(pathOfExcelFile, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing); //This opens the file
 
@@ -37,9 +41,7 @@ namespace TinhThoiGian.Helper
                 Range xlRange = xlWorksheet.UsedRange;//("A1",lastColumnIndex + lastRow.ToString());
 
 
-                xlRange.EntireColumn.AutoFit();
-
-                object[,] cellValues = (object[,])xlRange.Value2;
+                object[,] cellValues = (object[,])xlRange.Value;
                 object[] values = new object[lastColumn];
 
                 if (columnCount <= 0)
@@ -56,7 +58,31 @@ namespace TinhThoiGian.Helper
 
                         if (cell != null)
                         {
-                            item.Add(cell.ToString());
+                            if (cell.GetType() != typeof(String))
+                            {
+                                string cellText = xlRange.Cells[i, j].Text.ToString();
+                                String[] arrayText = cellText.Trim().Split('-');
+                                List<string> listResultCellText = new List<string>();
+
+                                foreach (string itemCellText in arrayText)
+                                {
+
+                                    List<string> listResultItemCellText = new List<string>();
+                                    String[] itemCellArray = itemCellText.Trim().Split(':');
+                                    foreach (string itemCell in itemCellArray)
+                                    {
+                                        Int32.Parse(itemCell);
+                                        listResultItemCellText.Add(Int32.Parse(itemCell).ToString("00"));
+                                    }
+                                    listResultCellText.Add(string.Join(" : ", listResultItemCellText));
+                                }
+
+                                item.Add(string.Join(" - ", listResultCellText));
+                            }
+                            else
+                            {
+                                item.Add(cell = cellValues[i, j].ToString());
+                            }
                         }
                         else
                         {
@@ -64,10 +90,13 @@ namespace TinhThoiGian.Helper
                         }
 
                     }
+                    if (!item.Contains(arrayList))
+                    {
+                        arrayList.Add(item);
+                    }
 
-                    arrayList.Add(item);
                 }
-
+                xlRange.EntireColumn.AutoFit();
                 xlWorkbook.Close(false, Type.Missing, Type.Missing);
 
                 Marshal.FinalReleaseComObject(xlRange);
@@ -90,9 +119,58 @@ namespace TinhThoiGian.Helper
             {
                 this.KillExcelProcess(excelProcsOld);
             }
+            var listArrTitle = (ArrayList)arrayList[0];
+            List<string> listTitle = listArrTitle.Cast<string>().ToList(); ;
+            var duplicates = listTitle
+                 .GroupBy(i => i)
+                 .Where(g => g.Count() > 1)
+                 .Select(g => g.Key)
+                 .ToList();
+                 ;
 
+            List<int> listColumnWrong = new List<int>();
+            int count = 0;
+            duplicates.Remove("");
+            foreach (string item in duplicates)
+            {
+                List<int> listColumnDuplicate = new List<int>();
+                bool flagDuplicates = false;
+               
+                for (int i = 0; i < listTitle.Count; i++)
+                {
+                    if (flagDuplicates && listTitle.ElementAt(i) == item)
+                    {
+                        listColumnWrong.Add(i);
+                    }
+                    else
+                    {
+                        flagDuplicates = true;
+                    }
+
+                    if (listTitle.ElementAt(i) == "")
+                    {
+                        listColumnWrong.Add(i);
+                    }
+
+                }
+            }
+
+            if (listColumnWrong.Count > 0)
+            {
+                listColumnWrong.Sort();
+                var noDupes = listColumnWrong.Distinct().ToList();
+                int flag = 0;
+                //listColumnWrong.Add(listColumnEmty);    
+                foreach (var item in noDupes)
+                {
+                    foreach (ArrayList row in arrayList)
+                    {
+                        row.RemoveAt(item - flag);
+                    }
+                    flag++;
+                }
+            }
             return arrayList;
-
         }
 
         public void EportExcel(System.Windows.Forms.DataGridView dataExcelGridView, List<string> listExceptColumn = null)
@@ -314,23 +392,23 @@ namespace TinhThoiGian.Helper
         //}
         public void KillExcelProcess(Process[] procOlds)
         {
-                //Compare the EXCEL ID and Kill it 
-                Process[] excelProcsNew = Process.GetProcessesByName("EXCEL");
-                foreach (Process procNew in excelProcsNew)
+            //Compare the EXCEL ID and Kill it 
+            Process[] excelProcsNew = Process.GetProcessesByName("EXCEL");
+            foreach (Process procNew in excelProcsNew)
+            {
+                int exist = 0;
+                foreach (Process procOld in procOlds)
                 {
-                    int exist = 0;
-                    foreach (Process procOld in procOlds)
+                    if (procNew.Id == procOld.Id)
                     {
-                        if (procNew.Id == procOld.Id)
-                        {
-                            exist++;
-                        }
-                    }
-                    if (exist == 0)
-                    {
-                        procNew.Kill();
+                        exist++;
                     }
                 }
+                if (exist == 0)
+                {
+                    procNew.Kill();
+                }
+            }
         }
     }
 }
