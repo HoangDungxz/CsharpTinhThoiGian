@@ -571,18 +571,21 @@ namespace TinhThoiGian
                                 double labor = 0;
                                 total += minute;
 
-                                if(minute > this.toMinute("04:00"))
-                                {
-                                    labor = 0;
-                                }
-                                else if (minute == this.toMinute("00:00"))
+                                if (minute < this.toMinute("04:00"))
                                 {
                                     labor = 1;
                                 }
-                                else
+                                else if(minute >= this.toMinute("08:00"))
+                                {
+                                    labor = 0;
+                                }
+                                else if (minute >= this.toMinute("04:00"))
                                 {
                                     labor = 0.5;
                                 }
+
+                               
+
                                 countLabor += labor;
                             }
 
