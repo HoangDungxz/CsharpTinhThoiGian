@@ -583,9 +583,6 @@ namespace TinhThoiGian
                                 {
                                     labor = 0.5;
                                 }
-
-                               
-
                                 countLabor += labor;
                             }
 
