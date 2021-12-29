@@ -119,7 +119,7 @@ namespace TinhThoiGian
                         //read excel file  
                         ArrayList excelData = excelHepler.ReadExcelInterop(this.filePath);
                         this.dataExcel = listHelper.ArrayListToDataTable(excelData);
-                        
+
 
                         this.listTitle = (ArrayList)excelData[0];
 
@@ -340,6 +340,7 @@ namespace TinhThoiGian
                             }
 
                             int checkout = this.toMinute(splipItem.Last());
+                            var aa = this.toHour(checkout);
 
                             if (checkin <= this.toMinute("11:45") &&
                                 checkout >= this.toMinute("13:15")
@@ -406,8 +407,20 @@ namespace TinhThoiGian
 
                             // nếu quá 9h thì không được làm bù
                             var lamBu = checkout - this.toMinute("17:30");
+                            var overtime = lamBu;
                             var qua9h = checkin - this.toMinute("09:00");
-                            if (partFultTime != "Part" && checkin > this.toMinute("09:00"))
+                            if (checkin >= this.toMinute("11:45") && checkin <= this.toMinute("13:15"))
+                            {
+                                qua9h = this.toMinute("11:45") - this.toMinute("09:00");
+                            }
+                            else if (checkin > this.toMinute("13:15"))
+                            {
+                                qua9h = checkin - this.toMinute("09:00") - 90;
+                            }
+
+                            var abc = this.toHour(qua9h);
+
+                            if (partFultTime != "Part" && checkin > this.toMinute("09:00") && checkin < this.toMinute("17:30"))
                             {
                                 if (lamBu > qua9h)
                                 {
@@ -418,19 +431,48 @@ namespace TinhThoiGian
                                     lamBu = 0;
                                 }
 
+
+
                                 lateTime = qua9h;
-                                timeWorkItem = (this.toMinute("17:30") + lamBu - 90 - checkin);
-                                timeWorkItem2 = (this.toMinute("17:30") + lamBu - 90 - this.toMinute("09:00"));
+                                //timeWorkItem = ((this.toMinute("17:30") + lamBu) - (90 + checkin));
+
+                                if (checkout < this.toMinute("18:30"))
+                                {
+                                    timeWorkItem = checkout - checkin - 90;
+                                }else
+                                {
+                                    timeWorkItem = this.toMinute("18:30") - checkin - 90;
+                                }
+
+
+
+
+                                //var e = this.toHour((this.toMinute("17:30") + lamBu));
+
+                                var c = toHour(timeWorkItem);
+
+                                //var d = this.toHour(this.toMinute("18:00") - this.toMinute("09:15") - 90);
+
+
+
+                                //timeWorkItem2 = (this.toMinute("17:30") + lamBu - 90 - this.toMinute("09:00"));
                             }
                             else
                             {
                                 lateTime = 0;
                             }
 
-                            resultItem.Add(this.toHour(timeWorkItem));
+                            resultItem.Add(lamBu);
 
-                            arrResultItem.Add(timeWorkItem2);
+                            //arrResultItem.Add(qua9h);
+                            arrResultItem.Add(qua9h);
+
+                            arrResultItem.Add(timeWorkItem);
                             arrResultItem.Add(lateTime);
+
+                            arrResultItem.Add(overtime);
+
+
                             resultItem2.Add(arrResultItem);
                         }
                         else
@@ -471,16 +513,24 @@ namespace TinhThoiGian
                     {
                         if (item != System.DBNull.Value && !this.listWeekEnds.Contains(count))
                         {
+                            int lamBu = 0;
                             int dataWorkTime = 0;
-                            int lateTime = 0;
+                            int qua9h = 0;
+
+                            int overtime = 0;
                             if (!item.GetType().FullName.Equals("System.String"))
                             {
                                 var checkTime = (List<int>)item;
-                                dataWorkTime = (int)checkTime.First();
-                                lateTime = (int)checkTime.Last();
+                                //lamBu = (int)checkTime.First();
+                                //qua9h = (int)checkTime[1];
+                                dataWorkTime = (int)checkTime[1];
+                                //= (int)checkTime[2];
+                                overtime = (int)checkTime.Last();
                             }
 
-                            if (dataWorkTime < this.toMinute("08 : 00") || lateTime > 0)
+                            var a = this.toHour(dataWorkTime);
+
+                            if (dataWorkTime < this.toMinute("08 : 00") || qua9h > 0)
                             {
                                 int minuteLack;
                                 if (partFultTime == "Part")
@@ -492,10 +542,21 @@ namespace TinhThoiGian
                                     minuteLack = this.toMinute("08 : 00") - dataWorkTime;
                                 }
 
-                                if (lateTime > 0)
-                                {
-                                    minuteLack += lateTime;
-                                }
+
+  
+                                //if (lateTime > 0 && lateTime <= overtime)
+                                //{
+                                //    minuteLack = minuteLack;
+                                //}
+                                //else if (lateTime > 0 && lateTime > overtime)
+                                //{
+                                //    minuteLack = lateTime + lateTime;
+                                //}
+                                //else
+                                //{
+                                //    minuteLack = lateTime;
+                                //}
+
                                 string timeLack = "";
                                 if (minuteLack > 0)
                                 {
@@ -552,7 +613,7 @@ namespace TinhThoiGian
         {
             //bool flagHead = true;
             int countRow = 0;
-            Color colorRed = System.Drawing.ColorTranslator.FromHtml("#bf360c");
+
             foreach (IEnumerable items in listData)
             {
                 if (countRow > 0)
@@ -561,27 +622,85 @@ namespace TinhThoiGian
                     int countColumn = 0;
                     double countLabor = 0;
                     ArrayList itemClone = (ArrayList)items;
-                    foreach (var item in items)
-                    {
-                        if (item != System.DBNull.Value)
-                        {
-                            if (countColumn >= 3 && (string)item != "")
-                            {
-                                int minute = this.toMinute((string)item);
-                                double labor = 0;
-                                total += minute;
 
-                                if (minute < this.toMinute("04:00"))
+
+                    //foreach (var item in itemClone)
+                    //{
+                    //    if (item != System.DBNull.Value)
+                    //    {
+                    //        if (countColumn >= 3 && (string)item != "")
+                    //        {
+                    //            int minute = this.toMinute((string)item);
+                    //            double labor = 0;
+                    //            total += minute;
+
+                    //            if (minute <= this.toMinute("02:00"))
+                    //            {
+
+                    //                labor = 1;
+                    //            }
+                    //            else if(minute > this.toMinute("06:00"))
+                    //            {
+                    //                labor = 0;
+                    //            }
+                    //            else if (minute > this.toMinute("02:00"))
+                    //            {
+                    //                labor = 0.5;
+                    //                var item2 = item;
+                    //                item2 = item + "/0.5";
+
+                    //            }
+                    //            countLabor += labor;
+                    //        }
+
+                    //    }
+                    //    countColumn++;
+                    //}
+
+                    for (int i = 0; i < itemClone.Count; i++)
+                    {
+                        var abc = itemClone[i];
+                        if (itemClone[i] != System.DBNull.Value)
+                        {
+                            if (countColumn >= 3 && (string)itemClone[i] != "")
+                            {
+                                int minute = this.toMinute((string)itemClone[i]);
+                                double labor = 0;
+
+
+                                if (minute <= this.toMinute("02:00"))
                                 {
+                                    total += minute;
                                     labor = 1;
                                 }
-                                else if(minute >= this.toMinute("08:00"))
+                                else if (minute > this.toMinute("06:00"))
                                 {
                                     labor = 0;
+                                    total += minute;
                                 }
-                                else if (minute >= this.toMinute("04:00"))
+                                else if (minute > this.toMinute("02:00"))
                                 {
                                     labor = 0.5;
+
+                                    var timeWork = this.toMinute("08:00") - this.toMinute(itemClone[i].ToString());
+
+
+                                    if (timeWork > this.toMinute("04:00"))
+                                    {
+                                        var overTime = timeWork - this.toMinute("04:00");
+                                        itemClone[i] = "0.5";
+                                        total += 0;
+
+                                    }
+                                    else
+                                    {
+                                        var lackTime = this.toMinute("04:00") - timeWork;
+                                        itemClone[i] = "0.5 - " + this.toHour(lackTime);
+                                        total += lackTime;
+
+                                    }
+
+
                                 }
                                 countLabor += labor;
                             }
@@ -589,7 +708,10 @@ namespace TinhThoiGian
                         }
                         countColumn++;
                     }
-                    itemClone.Insert(3, this.toHour(total));
+
+
+
+                    itemClone.Insert(3, (total != 0) ? total : 0 );
                     itemClone.Insert(4, countLabor);
                     countRow++;
                 }
